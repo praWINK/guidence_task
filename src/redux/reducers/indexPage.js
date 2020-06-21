@@ -1,8 +1,13 @@
 const INITIAL_STATE = {
-   
-    receivedWidgets:{
+
+    receivedWidgets: {
         data: [],
-        error:null,
+        error: null,
+        loading: true
+    },
+    getWidgets:{
+        data: [],
+        error: null,
         loading: true
     }
 
@@ -10,21 +15,31 @@ const INITIAL_STATE = {
 
 export default function (state = INITIAL_STATE, action) {
     switch (action.type) {
-        
+
         case 'Fetched_Widgets':
             return {
                 ...state,
-                receivedWidgets:{ 
+                receivedWidgets: {
                     data: action.payload,
                     error: null,
                     loading: false
+                }
             }
-        }
 
-        
+        case 'get_Widgets':
+            return {
+                ...state,
+                getWidgets: {
+                    data: action.payload,
+                    error: null,
+                    loading: false
+                }
+            }
+
+
         default:
             return {
                 ...state
-        }
+            }
     }
 }

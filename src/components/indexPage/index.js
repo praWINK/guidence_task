@@ -9,32 +9,44 @@ class IndexPage extends Component {
       showNav: false
     }
   }
-  openNav(featureType){
-    this.props.getWidgets(featureType);
-    this.setState({showNav:true})
+  componentDidMount(){
+    this.props.getWidgetOptions();
+   
   }
-  closeNav(){
-    this.setState({showNav:false})
+  openNav(featureType) {
+    this.props.getWidgets(featureType);
+    this.setState({ showNav: true })
+  }
+  closeNav() {
+    this.setState({ showNav: false })
   }
   allowDrop(ev) {
     ev.preventDefault();
   }
-  drag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
+  drag(event,fromDrag) {
+    var style = window.getComputedStyle(event.target, null);
+    event.dataTransfer.setData("text", event.target.id);
+    this.setState({ leftValue: parseInt(style.getPropertyValue("left"),10) - event.clientX, topValue: parseInt(style.getPropertyValue("top"),10) - event.clientY,cutElement:fromDrag })
+    console.log(event,"parent node vlaue ot test")
   }
-  drop(ev) {
-    ev.preventDefault();
-    var data = ev.dataTransfer.getData("text");
-    var nodeCopy = document.getElementById(data).cloneNode(true);
-    nodeCopy.id = "newId"; /* We cannot use the same ID */
-    ev.target.appendChild(nodeCopy);
-  }  
-  render() {
-    console.log(this.props)
-    return (
-      <div className="container-fluid ">
+  drop(event) {
+   
+    var data = event.dataTransfer.getData("text");
+    var dm = document.getElementById(data);
+    dm.style.left = (event.clientX + parseInt(this.state.leftValue-70,10)) + 'px';
+    dm.style.top = (event.clientY + parseInt(this.state.topValue-50,10)) + 'px';
+    event.preventDefault();
+    console.log( this.state.cutElement,"parent node vlaue ot test")
+    var nodeCopy =dm.parentNode.id === "div1" ? dm : dm.cloneNode(true);
+    nodeCopy.id = data;
+    event.target.appendChild(nodeCopy);
 
-      {/* HEADER SECTION START */}
+  }
+  render() {
+    return (
+      <div className="container-fluid p-0">
+
+        {/* HEADER SECTION START */}
         <div className="base-header py-2">
           <div className="d-flex justify-content-between">
             <ul className="float-right mb-0 f-13 p-0">
@@ -52,37 +64,42 @@ class IndexPage extends Component {
           </div>
         </div>
         {/* HEADER SECTION END */}
-        {/* FEATURE SECTION START */}
-        <div className="features-list d-flex">
-          <ul>
-            <li className="p-3" onClick={()=>this.openNav("templates")}><i className="fa fa-address-book d-block"></i>Templates</li>
-            <li className="p-3" onClick={()=>this.openNav("photos")}><i className="fa fa-picture-o d-block"></i>Photos</li>
-            <li className="p-3" onClick={()=>this.openNav("elements")}><i className="fa fa-delicious d-block"></i>Elements</li>
-            <li className="p-3" onClick={()=>this.openNav("text")}><i className="fa fa-text-width d-block"></i>Text</li>
-            <li className="p-3" onClick={()=>this.openNav("videos")}><i className="fa fa-video-camera d-block"></i>Videos</li>
-            <li className="p-3" onClick={()=>this.openNav("background")}><i className="fa fa-building d-block"></i>Background</li>
-            <li className="p-3" onClick={()=>this.openNav("more")}><i className="fa fa-ellipsis-h d-block"></i>more</li>
-          </ul>
-          <div id="div1" draggable="true" onDragStart={(event)=>this.drag(event)} onDrop={(event)=>this.drop(event)} onDragOver={(event)=>this.allowDrop(event)}></div>
-        </div>
-        {/* FEATURE SECTION END */}
-        {/* SIDENAV SECTION START */}
-        <div id="mySidenav" className={this.state.showNav ? "sidenav sidenav-width":"sidenav"}>
-          <a href="#" className="closebtn" onClick={()=>this.closeNav()}>&times;</a>
-          {this.props.receivedWidgets && this.props.receivedWidgets.data.length > 0 && this.props.receivedWidgets.data.map(widget=>
-            <div className="widget-category">
-            <p>{widget.widgetName}</p>
-            <ul className="widget-list">
-              {widget.widgetImgs && widget.widgetImgs.map((img,i)=>
-              <li className="pl-0"><img src={img} id={widget.widgetName+i} draggable="true" onDragStart={(event)=>this.drag(event)}/></li>
-              )}
-            </ul>
-          </div>
-          ) }
-          
-        </div>
-        {/* SIDENAV SECTION END */}
 
+        {/* FEATURE SECTION START */}
+        {/* <div className="d-flex page-bg"> */}
+          
+            <div className="features-list d-flex">
+              <ul>
+                {this.props.widgetOptions && this.props.widgetOptions.data.length > 0 && this.props.widgetOptions.data.map((widgetType,i)=>
+                <li className="p-3" onClick={() => this.openNav(widgetType.title)}><i className={widgetType.icon}></i>{widgetType.title}</li>
+                ) }
+              </ul>
+              <div id="div1" className="page-region" draggable="true" onDragStart={(event) => this.drag(event,true)} onDrop={(event) => this.drop(event)} onDragOver={(event) => this.allowDrop(event)}>
+                     
+          </div>
+            </div>
+          
+          {/* FEATURE SECTION END */}
+          
+          {/* SIDENAV SECTION START */}
+          <div id="mySidenav" className={this.state.showNav ? "sidenav sidenav-width" : "sidenav"}>
+            <a href="#" className="closebtn" onClick={() => this.closeNav()}>&times;</a>
+            {this.props.receivedWidgets && this.props.receivedWidgets.data.length > 0 && this.props.receivedWidgets.data.map(widget =>
+              <div className="widget-category" key={widget.widgetName}>
+                <p>{widget.widgetName}</p>
+                <ul>
+                  {widget.widgetImgs && widget.widgetImgs.map((img, i) =>
+                    <li className="pl-0" id={widget.widgetName}><img src={img} id={widget.widgetName + i} draggable="true" onDragStart={(event) => this.drag(event,false)} /></li>
+                  )}
+                </ul>
+              </div>
+            )}
+
+          </div>
+          {/* SIDENAV SECTION END */}
+          
+        {/* </div> */}
+        
       </div>
     );
   }
