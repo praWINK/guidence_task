@@ -21,9 +21,7 @@
 
 /* FEATURE SECTION START */
 .features-list{
- 
   background-color: #add8e67a;
-  
 }
 .features-list ul{
   height: 100vh;
@@ -107,17 +105,12 @@
 /* WIDGET SECTION END */
 
 #div1 {
-  width: 100%;
-  border: 1px solid #aaaaaa;
-  
+  width: 100%; 
 }
 
 #div1 img {
   width: 60px;
   position: relative;
-}
-.page-bg{
-  background: #add8e67a;
 }
 .page-region{
   margin: 100px;

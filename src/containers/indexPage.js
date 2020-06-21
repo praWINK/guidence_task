@@ -12,7 +12,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({"getWidgets":getWidgets,"getWidgetOptions":getWidgetOptions},dispatch)
-    
 }
 
 export default connect(mapStateToProps, mapDispatchToProps) (IndexPage);

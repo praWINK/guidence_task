@@ -10,11 +10,6 @@ import logger from 'redux-logger';
 let Middlewares = applyMiddleware(thunk,logger);
 let store = createStore(reducers,Middlewares);
 
-// const store = createStore(
-//   reducers,
-//   applyMiddleware(thunk, logger)
-// )
-
 ReactDOM.render(
 	<Provider store={store}>
 		<Routes />
